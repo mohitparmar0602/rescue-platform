@@ -23,7 +23,7 @@ RUN apk add --no-cache \
     linux-headers
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_pgsql mbstring gd zip bcmath pcntl
+RUN docker-php-ext-install pdo_pgsql mbstring gd zip bcmath pcntl posix
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
