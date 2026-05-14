@@ -43,8 +43,9 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod +x docker/entrypoint.sh
 
 EXPOSE 80
 
-# Start command (handled via supervisord or a custom script)
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# Start command
+ENTRYPOINT ["docker/entrypoint.sh"]
