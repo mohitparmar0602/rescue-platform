@@ -46,7 +46,9 @@ COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
 # Set permissions
+RUN addgroup nginx www-data
 RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 RUN dos2unix docker/entrypoint.sh
 RUN chmod +x docker/entrypoint.sh
 
