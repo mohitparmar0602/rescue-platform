@@ -28,7 +28,6 @@ class AgencyRegistrationController extends Controller
             'agency_type' => ['required', 'string', 'max:255'],
             'registration_no' => ['required', 'string', 'max:255', 'unique:'.Agency::class],
             'address' => ['required', 'string'],
-            'document' => ['required', 'file', 'mimes:pdf,jpg,png', 'max:2048'],
         ]);
 
         DB::transaction(function () use ($request) {
@@ -40,14 +39,6 @@ class AgencyRegistrationController extends Controller
                 'status' => 'pending',
             ]);
 
-            if ($request->hasFile('document')) {
-                $path = $request->file('document')->store('agency_documents', 'public');
-                AgencyDocument::create([
-                    'agency_id' => $agency->id,
-                    'file_path' => $path,
-                    'document_type' => 'registration_proof',
-                ]);
-            }
 
             $user = User::create([
                 'name' => $request->name,

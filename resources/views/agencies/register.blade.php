@@ -67,11 +67,6 @@
             <x-input-error :messages="$errors->get('address')" class="mt-2" />
         </div>
 
-        <div class="mt-4">
-            <x-input-label for="document" :value="__('Upload Proof of Registration (PDF/JPG/PNG)')" />
-            <input id="document" class="block mt-1 w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none" type="file" name="document" required accept=".pdf,.jpg,.jpeg,.png">
-            <x-input-error :messages="$errors->get('document')" class="mt-2" />
-        </div>
 
         <div class="flex items-center justify-end mt-8">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
