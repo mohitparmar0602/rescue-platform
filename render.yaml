@@ -26,6 +26,8 @@ services:
           type: redis
           name: rescue-redis
           property: connectionString
+      - key: REDIS_CLIENT
+        value: predis
       - key: APP_KEY
         sync: false
       # Reverb Config (Internal)
