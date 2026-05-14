@@ -1,0 +1,83 @@
+services:
+  # Main Web Application
+  - type: web
+    name: rescue-platform
+    env: php
+    plan: free
+    buildCommand: composer install --no-dev --optimize-autoloader && npm install && npm run build
+    startCommand: php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && apachectl -D FOREGROUND
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: redis
+      - key: CACHE_STORE
+        value: redis
+      - key: QUEUE_CONNECTION
+        value: redis
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rescue-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: rescue-redis
+          property: connectionString
+      - key: APP_KEY
+        sync: false # Generate this via 'php artisan key:generate --show' and add to Render Dashboard
+
+  # Background Worker for Queues (Email, Alerts, etc.)
+  - type: worker
+    name: rescue-worker
+    env: php
+    plan: free
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: php artisan queue:work --tries=3
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rescue-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: rescue-redis
+          property: connectionString
+
+  # WebSocket Server (Laravel Reverb)
+  - type: web
+    name: rescue-reverb
+    env: php
+    plan: free
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: php artisan reverb:start --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rescue-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: rescue-redis
+          property: connectionString
+
+  # Redis Instance
+  - type: redis
+    name: rescue-redis
+    plan: free
+    ipAllowList: [] # Only allow internal traffic from other services
+
+databases:
+  # PostgreSQL Database
+  - name: rescue-db
+    plan: free
